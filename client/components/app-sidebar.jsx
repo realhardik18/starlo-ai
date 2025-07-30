@@ -4,6 +4,15 @@ import React from "react"
 import { LayoutDashboard, Bell, Hash, Clock, Target } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  useUser,
+  SignOutButton,
+} from "@clerk/nextjs"
 
 import {
   Sidebar,
@@ -42,6 +51,7 @@ const navigationItems = [
 
 export function AppSidebar() {
   const pathname = usePathname("/dashboard/")
+  const { user } = useUser()
   return (
     <Sidebar className="border-r-gray-800 bg-black" style={{ background: "black" }}>
       <SidebarHeader className="p-4 bg-black">
@@ -75,16 +85,43 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarRail />
-      {/* User details box at the bottom */}
+      {/* User details/auth box at the bottom */}
       <div className="absolute bottom-0 left-0 w-full bg-gray-900 px-4 py-3 flex items-center space-x-3 border-t border-gray-800">
-        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white font-bold text-lg">
-          {/* Placeholder avatar initials */}
-          U
-        </div>
-        <div className="flex flex-col">
-          <span className="text-sm font-semibold text-white">User Name</span>
-          <span className="text-xs text-gray-400">user@email.com</span>
-        </div>
+        <SignedIn>
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: "w-9 h-9",
+              },
+            }}
+            afterSignOutUrl="/"
+          />
+          <div className="flex flex-col flex-1 min-w-0 ml-2">
+            <span className="text-sm font-semibold text-white truncate">
+              {user?.fullName || user?.username || "User"}
+            </span>
+            <span className="text-xs text-gray-400 truncate">
+              {user?.primaryEmailAddress?.emailAddress || user?.emailAddresses?.[0]?.emailAddress}
+            </span>
+          </div>
+          <SignOutButton>
+            <button className="ml-2 text-xs text-orange-400 hover:underline">Sign out</button>
+          </SignOutButton>
+        </SignedIn>
+        <SignedOut>
+          <div className="flex flex-col flex-1 min-w-0">
+            <SignInButton>
+              <button className="w-full mb-1 bg-orange-500 text-white rounded px-3 py-1 text-xs font-semibold hover:bg-orange-600">
+                Sign In
+              </button>
+            </SignInButton>
+            <SignUpButton>
+              <button className="w-full bg-gray-800 text-orange-400 rounded px-3 py-1 text-xs font-semibold hover:bg-gray-700">
+                Sign Up
+              </button>
+            </SignUpButton>
+          </div>
+        </SignedOut>
       </div>
     </Sidebar>
   )

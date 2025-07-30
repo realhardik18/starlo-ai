@@ -3,6 +3,13 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Eye, Hash, Bell, Clock, Shield, Zap, Target } from "lucide-react"
 import Link from "next/link"
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/nextjs"
 
 export default function LandingPage() {
   return (
@@ -18,14 +25,33 @@ export default function LandingPage() {
               <span className="text-xl font-bold text-white">Starlo-aiits</span>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" className="text-gray-300 hover:text-white hover:bg-gray-900">
-                Login
-              </Button>
-              <Link href="/dashboard">
-                <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white">
-                  Dashboard
-                </Button>
-              </Link>
+              <SignedOut>
+                <SignInButton>
+                  <Button variant="ghost" className="text-gray-300 hover:text-white hover:bg-gray-900">
+                    Login
+                  </Button>
+                </SignInButton>
+                <SignUpButton>
+                  <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white">
+                    Sign Up
+                  </Button>
+                </SignUpButton>
+              </SignedOut>
+              <SignedIn>
+                <UserButton
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-8 h-8",
+                    },
+                  }}
+                  afterSignOutUrl="/"
+                />
+                <Link href="/dashboard">
+                  <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white">
+                    Dashboard
+                  </Button>
+                </Link>
+              </SignedIn>
             </div>
           </nav>
         </div>
